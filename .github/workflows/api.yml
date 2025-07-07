@@ -38,5 +38,4 @@ jobs:
             --platform managed \
             --service-account copilot-sa@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com \
             --allow-unauthenticated \
-            --add-cloudsql-instances "" \
             --set-env-vars MONGO_URI=${{ secrets.MONGO_URI }},GEMINI_KEY=${{ secrets.GEMINI_KEY }}
