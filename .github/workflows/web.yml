@@ -1,0 +1,30 @@
+name: Deploy Front to Firebase Hosting
+on:
+  push:
+    branches: [ main ]
+    paths: [ "web/**", ".github/workflows/web.yml" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1 — Checkout
+      - uses: actions/checkout@v4
+
+      # 2 — Node / pnpm
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Install & build
+        run: |
+          cd web
+          pnpm i --frozen-lockfile
+          pnpm run build      # creates web/dist
+
+      # 3 — Deploy to Firebase
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.GCP_SA_JSON }}
+          projectId: ai-act-copilot-fe      # change if you named it differently
+          channelId: live                   # "live" = production

@@ -1,0 +1,43 @@
+name: Deploy API to Cloud Run
+on:
+  push:
+    branches: [ main ]
+    paths: [ "api/**", ".github/workflows/api.yml" ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write                # for Workload Identity Federation
+    steps:
+      # 1 — Checkout code
+      - uses: actions/checkout@v4
+
+      # 2 — Auth to Google Cloud
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_JSON }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+
+      # 3 — Build & push container
+      - name: Build & push
+        run: |
+          gcloud builds submit api \
+            --tag us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/copilot-docker/api:latest
+
+      # 4 — Deploy to Cloud Run
+      - name: Deploy
+        run: |
+          gcloud run deploy copilot-api \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/copilot-docker/api:latest \
+            --region us-central1 \
+            --platform managed \
+            --service-account copilot-sa@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com \
+            --allow-unauthenticated \
+            --add-cloudsql-instances "" \
+            --set-env-vars MONGO_URI=${{ secrets.MONGO_URI }},GEMINI_KEY=${{ secrets.GEMINI_KEY }}
