@@ -24,6 +24,8 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.GCP_SA_JSON }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: ai-act-copilot-fe      # change if you named it differently
           channelId: live                   # "live" = production
+        env:
+            FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}  # set this secret in your repo settings
