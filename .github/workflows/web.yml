@@ -2,7 +2,6 @@ name: Deploy Front to Firebase Hosting
 on:
   push:
     branches: [ main ]
-    paths: [ "web/**", ".github/workflows/web.yml" ]
 
 jobs:
   deploy:

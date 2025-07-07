@@ -2,7 +2,6 @@ name: Deploy API to Cloud Run
 on:
   push:
     branches: [ main ]
-    paths: [ "api/**", ".github/workflows/api.yml" ]
 
 jobs:
   build-deploy:
