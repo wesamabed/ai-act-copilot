@@ -13,3 +13,7 @@ web/dist/
 .env*
 key.json
 key.b64
+
+# secrets
+key.json
+key.b64
